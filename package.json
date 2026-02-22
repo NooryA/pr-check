@@ -1,0 +1,55 @@
+{
+  "name": "@noor.ahamed/pr-check",
+  "version": "1.0.1",
+  "description": "Show your GitHub Pull Request responsibilities in one command",
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
+  "bin": {
+    "pr-check": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "lint": "eslint src tests --ext .ts",
+    "prepublishOnly": "npm run build",
+    "postinstall": "echo \"pr-check requires GitHub CLI (gh). If not logged in, run: gh auth login.\""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "cli",
+    "github",
+    "pull-request",
+    "review",
+    "pr",
+    "cross-platform"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NooryA/pr-check.git"
+  },
+  "homepage": "https://github.com/NooryA/pr-check#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "execa": "^8.0.1",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
