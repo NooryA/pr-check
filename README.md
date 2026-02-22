@@ -15,7 +15,7 @@ Each PR shows repo, number, title, URL, author, and how long it has been open. P
 ## Install
 
 ```bash
-npm install -g @noor.ahamed/pr-check
+npm install -g "@noor.ahamed/pr-check"
 ```
 
 ## Requirements
