@@ -1,6 +1,6 @@
-import { execa } from "execa";
 import type { PRRecord, PRCategory, GroupedResults, PrCheckOptions } from "./types";
 import { dedupePrs } from "./utils";
+import { getExeca } from "./execaLoader";
 
 export const GH_NOT_FOUND =
   "pr-check requires GitHub CLI (gh). Install: https://cli.github.com/ — then run: gh auth login.";
@@ -13,6 +13,7 @@ export const GH_NOT_AUTHED =
  */
 export async function isGhInstalled(): Promise<boolean> {
   try {
+    const execa = await getExeca();
     const result = await execa("gh", ["--version"], { reject: false });
     return result.exitCode === 0;
   } catch {
@@ -24,10 +25,12 @@ export async function isGhInstalled(): Promise<boolean> {
  * Run `gh auth login` with inherited stdio so the user can interact.
  */
 export async function runGhAuthLogin(): Promise<void> {
+  const execa = await getExeca();
   await execa("gh", ["auth", "login"], { stdio: "inherit" });
 }
 
 export async function ensureGhAuth(): Promise<void> {
+  const execa = await getExeca();
   try {
     await execa("gh", ["auth", "status"]);
   } catch (err) {
@@ -47,6 +50,7 @@ export async function ensureGhAuth(): Promise<void> {
 }
 
 export async function getCurrentUserLogin(): Promise<string> {
+  const execa = await getExeca();
   const { stdout } = await execa("gh", ["api", "user", "--jq", ".login"]);
   const login = (stdout ?? "").trim();
   if (!login) {
@@ -84,6 +88,7 @@ function authorLogin(item: GhSearchPrItem): string {
 export async function validateRepos(repos: string[]): Promise<void> {
   if (repos.length === 0) return;
   const invalid: string[] = [];
+  const execa = await getExeca();
   await Promise.all(
     repos.map(async (repo) => {
       const result = await execa("gh", ["api", `/repos/${repo}`], { reject: false });
@@ -133,6 +138,7 @@ export async function searchPrs(
     }
   }
   args.push("--json", "repository,number,title,url,author,createdAt,isDraft");
+  const execa = await getExeca();
   try {
     const { stdout } = await execa("gh", args);
     const raw = (stdout ?? "").trim();

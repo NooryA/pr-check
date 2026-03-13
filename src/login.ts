@@ -1,8 +1,8 @@
 import { createInterface } from "readline";
-import { execa } from "execa";
 import { platform } from "os";
 import chalk from "chalk";
 import { isGhInstalled, runGhAuthLogin } from "./github";
+import { getExeca } from "./execaLoader";
 
 const GH_INSTALL_URL = "https://cli.github.com/";
 
@@ -52,6 +52,7 @@ export async function installOrOpenGh(noColor: boolean): Promise<void> {
       { name: "scoop", args: ["install", "gh"] },
       { name: "choco", args: ["install", "gh", "-y"] },
     ];
+    const execa = await getExeca();
     for (const { name, args } of winInstallers) {
       try {
         const cmd = name === "winget" ? "winget" : name === "scoop" ? "scoop" : "choco";
@@ -71,6 +72,7 @@ export async function installOrOpenGh(noColor: boolean): Promise<void> {
   }
 
   if (plat === "darwin") {
+    const execa = await getExeca();
     try {
       log("Installing GitHub CLI via Homebrew...");
       await execa("brew", ["install", "gh"], { stdio: "inherit" });
@@ -85,6 +87,7 @@ export async function installOrOpenGh(noColor: boolean): Promise<void> {
   }
 
   if (plat === "linux") {
+    const execa = await getExeca();
     try {
       log("Trying to install GitHub CLI via apt...");
       await execa("sudo", ["apt-get", "update", "-qq"], { reject: false });
@@ -107,7 +110,8 @@ export async function installOrOpenGh(noColor: boolean): Promise<void> {
   console.log("After installing, run pr-check again.");
 }
 
-function openUrl(url: string): Promise<void> {
+async function openUrl(url: string): Promise<void> {
+  const execa = await getExeca();
   const plat = platform();
   const cmd = plat === "win32" ? "cmd" : plat === "darwin" ? "open" : "xdg-open";
   const args = plat === "win32" ? ["/c", "start", "", url] : [url];
